@@ -1,7 +1,12 @@
-# Pre-approve build scripts for the packages C3 itself installs that need
-# them: `workerd` downloads the platform binary and `esbuild` downloads/
-# builds native bindings. Without these, pnpm 11+ aborts the install with
-# ERR_PNPM_IGNORED_BUILDS.
+# Single-package workspace. `packages` must be present so older pnpm
+# versions (like the one Cloudflare's CI uses) can read this file.
+packages:
+  - .
+# Build scripts allowed for pnpm 10 (onlyBuiltDependencies) and pnpm 11+
+# (allowBuilds). Without these, installing workerd/esbuild aborts.
+onlyBuiltDependencies:
+  - esbuild
+  - workerd
 allowBuilds:
   esbuild: true
   workerd: true
