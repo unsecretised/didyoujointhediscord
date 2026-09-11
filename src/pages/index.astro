@@ -1,11 +1,313 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Button from '../components/ui/button.astro';
+import Card from '../components/ui/card.astro';
+import Badge from '../components/ui/badge.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Random helpers. This site renders per request, so every visitor gets fresh nonsense.
+const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+const sample = <T,>(arr: T[], n: number): T[] =>
+	[...arr].sort(() => Math.random() - 0.5).slice(0, n);
+const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const DISCORD_URL = 'https://discord.mystikolabs.com';
+
+const headlines = [
+	'Did you join the Discord?',
+	'Have you joined the Discord?',
+	'Serious question. Did you join the Discord?',
+	'The Discord. Has thou joined it?',
+	'You, yes you. Did you join the Discord?',
+	'Did u join the discord?',
+	'You have, in fact, joined the Discord, right?',
+	'The Discord awaits. Did you join yet?'
+];
+
+const taglines = [
+	'The worlds most normal Discord server. Join it. Join the Discord. This is the whole site.',
+	'An ecosystem for people who have not yet joined the Discord. There is a better way, and it is the Discord.',
+	'Connecting humans and their notifications since lunch. Did you join the Discord?',
+	'One server. Zero purpose. Infinite reminders. Saul Goodman did nothing wrong. Join the Discord.',
+	'Please join the Discord. This website exists so you join the Discord. Thank you for reading this far, then say it on Discord.'
+];
+
+const productPool = [
+	{
+		name: 'JoinChecker',
+		desc: 'Continuously monitors whether you have joined the Discord and notifies you when you have not. Checks run every 400ms, which some might describe as a lot of checks. Did you join the Discord?'
+	},
+	{
+		name: 'Reminderly',
+		desc: 'Sends you a friendly reminder to join the Discord every two hours. Cannot be disabled, because disabling it is how people forget to join the Discord.'
+	},
+	{
+		name: 'Statboard Pro',
+		desc: 'Enterprise grade dashboard that displays one metric: whether you have joined the Discord. Red means no. It is always red. No redstone involved.'
+	},
+	{
+		name: 'Invitelink',
+		desc: 'A tool that generates a Discord invite link, then a second one in case the first one did not work, then three more. Also asks if you joined the Discord.'
+	},
+	{
+		name: 'Pingsummon',
+		desc: 'Pings you the moment anything happens anywhere. Never miss a single message about absolutely nothing. Powered by their discord.'
+	},
+	{
+		name: 'Excusely',
+		desc: 'Generates excuses for why you have not joined the Discord yet, then cross references each excuse against the Discord you have not joined.'
+	}
+];
+
+const statsPool = [
+	{ label: 'members registered', range: [412, 982] },
+	{ label: 'online right now', range: [3, 11] },
+	{ label: 'join the discord reminders sent', range: [8100, 9400] },
+	{ label: 'messages sent about nothing', range: [22000, 78000] },
+	{ label: 'people who asked what this is', range: [9, 99] },
+	{ label: 'average pings per user', range: [37, 415] }
+];
+
+const testimonialPool = [
+	{
+		quote: 'I used to check which server to join every morning. Now I only check one. Did I join the Discord? Yes I did.',
+		name: 'Priya, product manager'
+	},
+	{
+		quote: 'This platform changed my life. I joined the Discord, and the Discord joined me.',
+		name: 'Marc, surprisingly normal'
+	},
+	{
+		quote: 'Every visit reminds me to join the Discord. I visit eleven times a day because I want to join the Discord.',
+		name: 'a loyal visitor'
+	},
+	{
+		quote: 'Before this site, I had no idea whether I had joined the Discord. After an update, I got a badge that told me to join the Discord. Ten stars.',
+		name: 'Deniz, occasionally online'
+	},
+	{
+		quote: 'Someone told me to join the Discord. Then a second person told me to join the Discord. Then this loading screen told me to join the Discord. I joined the Discord.',
+		name: 'converted user #84'
+	},
+	{
+		quote: 'Our team runs entirely on vibes and one Discord. Did we join the Discord? Uhh, yes. Obviously.',
+		name: 'startup founder, anonymous'
+	}
+];
+
+const faqPool = [
+	{
+		q: 'Did you join the Discord?',
+		a: 'Did you?'
+	},
+	{
+		q: 'What is the Discord?',
+		a: 'It is a Discord. There is a Discord, and there is you, and there is a gap between those two things that only joining the Discord can close.'
+	},
+	{
+		q: 'How much does it cost?',
+		a: 'Nothing. It is free. It costs literally nothing to join the Discord, which means there is no legitimate reason left, and yet here you are, reading this FAQ.'
+	},
+	{
+		q: 'Do I need to create an account?',
+		a: 'No account needed if you have joined the Discord. If you have not joined the Discord, the form will keep reloading until you do, not out of malice, just architecture.'
+	},
+	{
+		q: 'Where can I read the documentation?',
+		a: 'The documentation is short. It says: join the Discord.'
+	},
+	{
+		q: 'Is this site serious?',
+		a: 'Legally this is a landing page, and landing pages ask questions, and you know which one.'
+	},
+	{
+		q: 'Can I get help with something else?',
+		a: 'We serve one purpose: reminding you to join the Discord. For anything else, please join the Discord and ask there.'
+	}
+];
+
+const headline = pick(headlines);
+const tagline = pick(taglines);
+const products = sample(productPool, 3);
+
+const statSet = sample(statsPool, 3).map((s) => ({
+	label: s.label,
+	value: rand(s.range[0], s.range[1]).toLocaleString('en-US')
+}));
+
+const testimonials = sample(testimonialPool, 3);
+const faqs = sample(faqPool, 4);
+
+const sectionTitle = pick(['Products', 'Apps', 'The Suite', 'Ecosystem']);
+const sectionSub = pick([
+	'Things we build and give away. All of them have something to do with the Discord.',
+	'One platform, one mission, one Discord.',
+	'Shipped daily. Deployed instantly. Joined the Discord?'
+]);
 ---
 
 <Layout>
-	<Welcome />
+	<div class="mx-auto max-w-[1160px] px-6 pt-12 pb-0 grid grid-cols-1 gap-x-12 gap-y-8 lg:grid-cols-[360px_minmax(0,1fr)] items-start">
+		<!-- Sidebar: hanging brand card -->
+		<aside class="lg:sticky lg:top-6 lg:justify-self-start max-w-[680px] w-full mx-auto lg:mx-0">
+			<Card class="p-6 shadow-2xl shadow-ink/20">
+				<header class="flex flex-col items-start">
+					<span class="inline-flex size-16 items-center justify-center rounded-2xl border border-line text-2xl font-black text-ink-strong bg-beige tracking-tight">
+						D
+					</span>
+					<h2 class="mt-3.5 text-2xl font-bold tracking-tight">The Discord&trade;</h2>
+					<p class="mt-2 text-[15px] text-muted-ink">{tagline}</p>
+				</header>
+
+				<div class="flex flex-wrap gap-1.5 mt-4">
+					<Button href={DISCORD_URL} target="_blank" rel="noopener noreferrer" variant="discord" class="mt-2">
+						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path
+								d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.445.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.011c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .079.01c.12.098.246.198.373.292a.077.077 0 0 1-.007.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"
+							></path>
+						</svg>
+						Join the Discord
+					</Button>
+				</div>
+
+				<dl class="mt-6 grid grid-cols-3 gap-3 text-center">
+					<div>
+						<dt class="text-[11px] uppercase tracking-wider text-faint font-semibold">Members</dt>
+						<dd class="text-lg font-bold text-ink-strong">{rand(33, 912)}</dd>
+					</div>
+					<div>
+						<dt class="text-[11px] uppercase tracking-wider text-faint font-semibold">Channels</dt>
+						<dd class="text-lg font-bold text-ink-strong">{rand(3, 27)}</dd>
+					</div>
+					<div>
+						<dt class="text-[11px] uppercase tracking-wider text-faint font-semibold">Reasons</dt>
+						<dd class="text-lg font-bold text-ink-strong">{rand(0, 1)}</dd>
+					</div>
+				</dl>
+			</Card>
+		</aside>
+
+		<!-- Main column -->
+		<main class="w-full max-w-[680px] mx-auto">
+			<!-- Announcement bar -->
+			<Badge variant="discord" class="mb-5 animate-pulse">New: the Discord exists. Did you join?</Badge>
+
+			<h2 class="text-4xl md:text-5xl font-bold tracking-tight leading-[1.08] text-ink-strong">{headline}</h2>
+			<p class="mt-4 text-muted-ink max-w-[52ch]">
+				{pick([
+					'You have questions about the Discord. The answer to all of them is the same, and it is a verb.',
+					'This site is a question. There is one correct answer, and it is located inside the Discord you have not joined.',
+					'Skip everything below. It is filler. The Discord is not filler. The Discord is the destination.'
+				])}
+			</p>
+
+			<div class="mt-6 flex flex-wrap gap-2">
+				<Button href={DISCORD_URL} target="_blank" rel="noopener noreferrer" variant="discord" size="lg">
+					Join the Discord
+				</Button>
+				<Button href={DISCORD_URL} target="_blank" rel="noopener noreferrer" variant="primary" size="lg">
+					Doubly confirm: the Discord, joined?
+				</Button>
+			</div>
+
+			<!-- Stats band -->
+			<h3 class="mt-12 text-xl font-bold tracking-tight">Live community telemetry</h3>
+			<p class="mt-1 text-[15px] text-muted-ink">Numbers audited by the discord, refreshed whenever you feel ready to join the discord.</p>
+			<div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+				{
+					statSet.map((s) => (
+						<Card>
+							<p class="text-2xl font-bold tracking-tight text-ink-strong">{s.value}</p>
+							<p class="mt-1 text-[13px] text-muted-ink">{s.label}</p>
+						</Card>
+					))
+				}
+			</div>
+
+			<!-- Products -->
+			<section class="mt-12">
+				<h3 class="text-xl font-bold tracking-tight">{sectionTitle}</h3>
+				<p class="mt-1 text-[15px] text-muted-ink mb-4">{sectionSub}</p>
+				<div class="flex flex-col gap-4">
+					{
+						products.map((p) => (
+							<Card>
+								<header class="flex items-center gap-3">
+									<span class="inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-line bg-beige-soft text-base font-black text-ink-strong">
+										{p.name.slice(0, 1)}
+									</span>
+									<h4 class="flex-1 text-[17px] font-bold tracking-tight">{p.name}</h4>
+									<Button variant="beige" size="sm" href={DISCORD_URL} target="_blank" rel="noopener noreferrer">
+										did u join the discord?
+									</Button>
+								</header>
+								<p class="mt-3 text-[15px] text-muted-ink max-w-[62ch]">{p.desc}</p>
+							</Card>
+						))
+					}
+				</div>
+			</section>
+
+			<!-- Testimonials -->
+			<h3 class="mt-12 text-xl font-bold tracking-tight">{pick(['Testimonials', 'Loved by users', 'What people say'])}</h3>
+			<p class="mt-1 text-[15px] text-muted-ink mb-4">Unverified, unexaggerated, unanimous about the discord.</p>
+			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+				{
+					testimonials.map((t) => (
+						<Card>
+							<p class="text-[15px] text-ink">&ldquo;{t.quote}&rdquo;</p>
+							<p class="mt-3 text-[13px] font-semibold text-muted-ink">{t.name}</p>
+						</Card>
+					))
+				}
+			</div>
+
+			<!-- FAQ -->
+			<h3 class="mt-12 text-xl font-bold tracking-tight">{pick(['FAQ', 'Frequently asked', 'Common questions'])}</h3>
+			<p class="mt-1 text-[15px] text-muted-ink mb-4">Everything you need to know about the discord, which you should join.</p>
+			<div class="flex flex-col divide-y divide-line -space-y-px">
+				{
+					faqs.map((f) => (
+						<details class="group px-5 py-4 border border-line bg-white/86 first:rounded-t-2xl last:rounded-b-2xl">
+							<summary class="flex cursor-pointer list-none items-center justify-between text-[15px] font-semibold text-ink">
+								{f.q}
+								<span class="text-faint transition-transform group-open:rotate-45">+</span>
+							</summary>
+							<p class="mt-2 text-[14.5px] text-muted-ink">{f.a}</p>
+						</details>
+					))
+				}
+			</div>
+
+			<!-- Final CTA -->
+			<Card class="mt-12 text-center bg-beige/60 border-beige-dark">
+				<h4 class="text-2xl font-bold tracking-tight text-ink-strong">{pick(['One last thing.', 'Quick question.', 'Final reminder.', 'Almost there.'])}</h4>
+				<p class="mt-2 text-[15px] text-muted-ink">
+					{pick([
+						'You read this whole page and still have not answered the question. The Discord is one click away. The button has been waiting patiently the entire time.',
+						'Stats reviewed, products admired, FAQ cleared. There is exactly one remaining step, and you already know it.',
+						'Say the answers out loud. Troubleshooting for the remaining concern lives in the discord.'
+					])}
+				</p>
+				<div class="mt-5 flex flex-wrap justify-center gap-2">
+					<Button href={DISCORD_URL} target="_blank" rel="noopener noreferrer" variant="discord" size="lg">
+						Join the Discord
+					</Button>
+					<Button href={DISCORD_URL} target="_blank" rel="noopener noreferrer" variant="beige" size="lg">
+						Did u join the discord?
+					</Button>
+				</div>
+			</Card>
+		</main>
+	</div>
+
+	<footer class="mx-auto max-w-[1160px] mt-14 px-6 pb-10 pt-5 border-t border-line">
+		<div class="flex flex-wrap items-center justify-between gap-3 text-[13px] text-faint">
+			<span>&copy; {new Date().getFullYear()} The Discord&trade;. No rights reserved, only reminders.</span>
+			<nav class="flex flex-wrap gap-3.5" aria-label="Footer">
+				<a class="text-muted-ink hover:text-ink no-underline hover:underline underline-offset-[3px]" href={DISCORD_URL} target="_blank" rel="noopener noreferrer">Join the Discord</a>
+				<a class="text-muted-ink hover:text-ink no-underline hover:underline underline-offset-[3px]" href={DISCORD_URL} target="_blank" rel="noopener noreferrer">Did you join the Discord?</a>
+				<a class="text-muted-ink hover:text-ink no-underline hover:underline underline-offset-[3px]" href="https://mystikolabs.com" target="_blank" rel="noopener noreferrer">inspired by mystikolabs.com</a>
+			</nav>
+		</div>
+	</footer>
 </Layout>

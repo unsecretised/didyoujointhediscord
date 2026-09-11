@@ -1,0 +1,26 @@
+---
+import { cn } from '../../lib/utils';
+
+const badgeVariants = {
+	default: 'border-transparent bg-beige text-ink-strong',
+	outline: 'border-line-strong bg-white/70 text-muted-ink',
+	discord: 'border-transparent bg-blahaj text-white'
+};
+
+interface Props {
+	variant?: keyof typeof badgeVariants;
+	class?: string;
+}
+
+const { variant = 'default', class: className } = Astro.props;
+---
+
+<span
+	class={cn(
+		'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold tracking-tight',
+		badgeVariants[variant],
+		className
+	)}
+>
+	<slot />
+</span>

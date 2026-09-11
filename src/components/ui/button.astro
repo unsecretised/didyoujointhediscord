@@ -1,0 +1,58 @@
+---
+import { cva } from 'class-variance-authority';
+import { cn } from '../../lib/utils';
+
+const buttonVariants = cva(
+	'inline-flex items-center justify-center gap-2 rounded-full whitespace-nowrap font-semibold transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
+	{
+		variants: {
+			variant: {
+				default:
+					'border border-line-strong bg-white text-ink hover:bg-surface hover:border-faint',
+				primary: 'border border-ink-strong bg-ink-strong text-white hover:bg-[#141412] hover:border-[#141412]',
+				beige: 'border border-beige bg-beige text-ink-strong hover:bg-beige-dark hover:border-beige-dark',
+				discord: 'border border-blahaj bg-blahaj text-white hover:bg-[#5f78d1] hover:border-[#5f78d1]',
+				ghost: 'text-muted-ink hover:bg-surface hover:text-ink',
+				outlineBeige:
+					'border border-dashed border-line-strong bg-surface font-mono text-[13px] text-ink hover:border-faint hover:bg-[#f4f3ef]'
+			},
+			size: {
+				sm: 'h-8 px-3.5 text-[13px] leading-[1.2]',
+				default: 'h-9 px-4 text-[13.5px] leading-[1.2]',
+				lg: 'h-11 px-6 text-[15px] leading-[1.2]',
+				icon: 'size-8'
+			}
+		},
+		defaultVariants: {
+			variant: 'default',
+			size: 'default'
+		}
+	}
+);
+
+interface Props {
+	variant?: keyof typeof buttonVariants.variants.variant;
+	size?: keyof typeof buttonVariants.variants.size;
+	class?: string;
+	href?: string;
+	target?: string;
+	rel?: string;
+	'aria-label'?: string;
+	type?: 'button' | 'submit';
+}
+
+const { variant, size, class: className, type = 'button', ...rest } = Astro.props;
+const classes = cn(buttonVariants({ variant, size }), className);
+---
+
+{
+	rest.href ? (
+		<a class={classes} {...rest}>
+			<slot />
+		</a>
+	) : (
+		<button class={classes} type={type} {...rest}>
+			<slot />
+		</button>
+	)
+}
